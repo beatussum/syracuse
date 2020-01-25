@@ -13,21 +13,44 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}"
-                    "${CMAKE_CURRENT_BINARY_DIR}")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}
+                    ${CMAKE_CURRENT_BINARY_DIR})
 
-set(DEAP_UI)
-set(DEAP_HPP)
-set(DEAP_CPP
+set(SYRACUSE_UI)
+set(SYRACUSE_HPP)
+set(SYRACUSE_CPP
     main.cpp)
+
+set(DOCS_DIR "${CMAKE_BINARY_DIR}/docs" CACHE PATH
+    "The path where the documention is built")
+set(DOCS_NAMESPACE "fr.beatussum.syracuse")
 
 find_package(Qt5 REQUIRED
              COMPONENTS Gui Widgets)
+find_package(Doxygen)
 
 configure_file(config-syracuse.hpp.in
                "${CMAKE_CURRENT_BINARY_DIR}/config-syracuse.hpp")
 set(CMAKE_AUTOMOC TRUE)
 set(CMAKE_AUTOUIC TRUE)
 
-add_executable(syracuse "${DEAP_UI}" "${DEAP_HPP}" "${DEAP_CPP}")
+add_executable(syracuse ${SYRACUSE_UI} ${SYRACUSE_HPP} ${SYRACUSE_CPP})
 target_link_libraries(syracuse Qt5::Gui Qt5::Widgets)
+
+if(DOXYGEN_FOUND AND WITH_DOCS)
+    set(DOXYGEN_OUTPUT_DIRECTORY ${DOCS_DIR})
+    set(DOXYGEN_ALLOW_UNICODE_NAMES YES)
+    set(DOXYGEN_REPEAT_BRIEF NO)
+    set(DOXYGEN_INLINE_INHERITED_MEMB YES)
+    set(DOXYGEN_HIDE_UNDOC_CLASSES YES)
+    set(DOXYGEN_HIDE_IN_BODY_DOCS YES)
+    set(DOXYGEN_WARN_NO_PARAMDOC YES)
+    set(DOXYGEN_WARN_AS_ERROR YES)
+    set(DOXYGEN_WARN_LOGFILE "${DOCS_DIR}/log")
+    set(DOXYGEN_EXCLUDE_PATTERNS "${DOXYGEN_EXCLUDE_PATTERNS} *.in")
+    set(DOXYGEN_QHP_NAMESPACE ${DOCS_NAMESPACE})
+    set(DOXYGEN_ECLIPSE_DOC_ID ${DOCS_NAMESPACE})
+    doxygen_add_docs(docs
+                     ${SYRACUSE_HPP}
+                     COMMENT "Generating documentation…")
+endif()

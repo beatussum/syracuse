@@ -22,6 +22,8 @@ project(SYRACUSE
         HOMEPAGE_URL "https://github.com/beatussum/syracuse"
         LANGUAGES CXX)
 
+option(WITH_DOCS "Enable building of documentation" OFF)
+
 macro(add_gcc_cxx_flags _flags)
     if(CMAKE_COMPILER_IS_GNUCXX)
          set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_flags}")
@@ -41,10 +43,9 @@ set(CMAKE_CXX_EXTENSIONS FALSE)
 add_gcc_cxx_flags("-fno-operator-names -funsigned-char -pipe")
 add_gcc_cxx_flags("-W -pedantic")
 add_gcc_cxx_flags("-Wold-style-cast -Wcomment -Wformat=2 -Wmain -Winline")
-add_gcc_cxx_flags("-Werror-implicit-function-declaration -Wmissing-braces")
 add_gcc_cxx_flags("-Wparentheses -Wunused -Wuninitialized -Wunknown-pragmas")
 add_gcc_cxx_flags("-Wfloat-equal -Wcast-qual -Wcast-align -Wconversion")
-add_gcc_cxx_flags("-Wsign-compare -Wunreachable-code")
+add_gcc_cxx_flags("-Wsign-compare -Wunreachable-code -Wmissing-braces")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(BUILD_TYPE_DEBUG TRUE)
