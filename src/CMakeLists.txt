@@ -17,9 +17,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR})
 
 set(SYRACUSE_UI)
-set(SYRACUSE_HPP)
+set(SYRACUSE_HPP
+    core/Sequence.hpp)
 set(SYRACUSE_CPP
-    main.cpp)
+    main.cpp
+    core/Sequence.cpp)
 
 set(DOCS_DIR "${CMAKE_BINARY_DIR}/docs" CACHE PATH
     "The path where the documention is built")
@@ -45,7 +47,6 @@ if(DOXYGEN_FOUND AND WITH_DOCS)
     set(DOXYGEN_HIDE_UNDOC_CLASSES YES)
     set(DOXYGEN_HIDE_IN_BODY_DOCS YES)
     set(DOXYGEN_WARN_NO_PARAMDOC YES)
-    set(DOXYGEN_WARN_AS_ERROR YES)
     set(DOXYGEN_WARN_LOGFILE "${DOCS_DIR}/log")
     set(DOXYGEN_EXCLUDE_PATTERNS "${DOXYGEN_EXCLUDE_PATTERNS} *.in")
     set(DOXYGEN_QHP_NAMESPACE ${DOCS_NAMESPACE})

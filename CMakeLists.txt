@@ -16,7 +16,7 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-project(SYRACUSE
+project(Syracuse
         VERSION 0.9
         DESCRIPTION "Just a program for playing with the Syracuse problem"
         HOMEPAGE_URL "https://github.com/beatussum/syracuse"
