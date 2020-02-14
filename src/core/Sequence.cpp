@@ -17,3 +17,32 @@
 
 
 #include "core/Sequence.hpp"
+
+namespace sequence
+{
+    uint64_t Sequence::at(vec_t::size_type n, const vec_t& uz) const
+    {
+        uint64_t ret;
+        const vec_t& t_uz = (uz.size() == 0) ? m_uz : uz;
+        auto uzSize = t_uz.size();
+
+        if (t_uz.size() == 0) {
+            throw std::invalid_argument("Sequence::at(): When you create a "
+                                        "`Sequence` object without initial "
+                                        "terms, you must specify them to "
+                                        "call this method.");
+        }
+
+        if (n < uzSize) {
+            ret = t_uz.at(n);
+        } else {
+            vec_t vec;
+            for (vec_t::size_type i = 1; i <= uzSize; ++i)
+                vec.push_back(at(n - i, t_uz));
+
+            ret = m_seq(vec);
+        }
+
+        return ret;
+    }
+}
