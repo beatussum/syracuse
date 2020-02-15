@@ -20,7 +20,6 @@
 #define SYRACUSE_SEQUENCE_HPP
 
 #include <functional>
-#include <memory>
 
 /**
  * @brief Namespace providing some utilities about sequences
@@ -43,34 +42,37 @@ namespace sequence
          *
          * This type is used by the recurrence relation for defining the initial
          * terms.
-         *
-         * @see Sequence(std::initializer_list<double> uz, seq_t s)
          */
-        using vec_t = std::vector<uint64_t>;
+        using vec_t = std::vector<int64_t>;
         /**
          * @brief Type representing a sequence defined by recursion.
          *
-         * For example, the code below corresponds to the Fibonacci sequence
-         * such as \f$u_{n + 1} = u_{n - 1} + u_n\f$:
+         * @par Example
+         * The code below corresponds to the Fibonacci sequence such as
+         * \f$u_{n + 1} = u_{n - 1} + u_n\f$:
          *
          * ```cpp
-         * Sequence::seq_t fibonacci = [](const Sequence::vec_t& un_) {
+         * using MySeq = sequence::Sequence;
+         *
+         * MySeq::seq_t fibonacci = [](const MySeq::vec_t& un_) {
          *     return un_[1] + un_[0];
          * };
          * ```
          *
          * @see vec_t
          */
-        using seq_t = std::function<uint64_t(const vec_t&)>;
+        using seq_t = std::function<int64_t(const vec_t&)>;
     public:
         /**
-         * @brief Construct an object from a recurrence relation.
+         * @brief Construct an object from a recurrence relation and set the
+         * initial terms.
          *
-         * For example, the code below set \f$u_0 = 0\f$ and \f$u_1 = 10\f$ for the
+         * @par Example
+         * The code below set \f$u_0 = 0\f$ and \f$u_1 = 10\f$ for the
          * recurrence relation `rel`:
          *
          * ```cpp
-         * Sequence sequence({0, 10}, rel);
+         * sequence::Sequence mySeq({0, 10}, rel);
          * ```
          *
          * @warning
@@ -84,20 +86,49 @@ namespace sequence
          */
         Sequence(const vec_t& uz, const seq_t& s)
             : m_uz(uz), m_seq(s) {}
-        Sequence(const seq_t& seq)
-            : Sequence({}, seq) {}
+        /**
+         * @brief Construct an object from a recurrence relation without
+         * setting the initial terms.
+         *
+         * @param s the recurrence relation
+         *
+         * @see Sequence(const vec_t& uz, const seq_t& s)
+         */
+        Sequence(const seq_t& s)
+            : Sequence({}, s) {}
         inline virtual ~Sequence();
+        /**
+         * @brief Set the initial terms to the current object.
+         *
+         * @par Example
+         *
+         * ```cpp
+         * sequence::Sequence mySeq(fibonacci);
+         * mySeq.withUz({0, 1}).at(6); // returns 8
+         * ```
+         *
+         * @note
+         * This method does not create another object: it returns a reference
+         * to the current modified object.
+         *
+         * @param uz the initial terms
+         * @return   a reference to the modified object
+         */
+        inline Sequence& withUz(const vec_t& uz);
 
         /**
          * @brief Get the term of the corresponding rank.
          *
          * This method is the equivalent of \f$u_n\f$.
          *
-         * @param n  corresponding rank
-         * @param uz overrides the initial terms
-         * @return   nth term
+         * @warning
+         * To use this method, \p m_uz must be initialized, or otherwise an
+         * `std::invalid_argument` will be thrown.
+         *
+         * @param n corresponding rank
+         * @return  nth term
          */
-        uint64_t at(vec_t::size_type n, const vec_t& uz = {}) const;
+        int64_t at(vec_t::size_type n) const;
     private:
         vec_t m_uz;
         seq_t m_seq;
@@ -107,6 +138,12 @@ namespace sequence
     {
         m_uz.clear();
         m_seq = nullptr;
+    }
+
+    inline Sequence& Sequence::withUz(const vec_t& uz)
+    {
+        m_uz = uz;
+        return *this;
     }
 }
 
