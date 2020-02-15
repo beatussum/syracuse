@@ -44,4 +44,14 @@ namespace sequence
 
         return ret;
     }
+
+    Sequence::vec_t::size_type Sequence::doUntil(int64_t value) const
+    {
+        vec_t::size_type stepCounter = 0;
+
+        while (at(stepCounter) != value)
+            ++stepCounter;
+
+        return stepCounter;
+    }
 }

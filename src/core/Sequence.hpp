@@ -22,7 +22,7 @@
 #include <functional>
 
 /**
- * @brief Namespace providing some utilities about sequences
+ * @brief Namespace providing some utilities about sequences.
  */
 namespace sequence
 {
@@ -77,25 +77,25 @@ namespace sequence
          *
          * @warning
          * \p uz must count the same number of values as in the recurrence
-         * relation \p s.
+         * relation \p seq.
          *
          * @param uz  list of the initial terms
-         * @param s   the recurrence relation
+         * @param seq the recurrence relation
          *
          * @see seq_t
          */
-        Sequence(const vec_t& uz, const seq_t& s)
-            : m_uz(uz), m_seq(s) {}
+        Sequence(const vec_t& uz, const seq_t& seq)
+            : m_uz(uz), m_seq(seq) {}
         /**
          * @brief Construct an object from a recurrence relation without
          * setting the initial terms.
          *
-         * @param s the recurrence relation
+         * @param seq the recurrence relation
          *
          * @see Sequence(const vec_t& uz, const seq_t& s)
          */
-        Sequence(const seq_t& s)
-            : Sequence({}, s) {}
+        Sequence(const seq_t& seq)
+            : Sequence({}, seq) {}
         inline virtual ~Sequence();
         /**
          * @brief Set the initial terms to the current object.
@@ -129,6 +129,13 @@ namespace sequence
          * @return  nth term
          */
         int64_t at(vec_t::size_type n) const;
+        /**
+         * @brief Get the cycle length.
+         *
+         * @param value run the sequence until
+         * @return      the number of steps before arriving at \p value
+         */
+        vec_t::size_type doUntil(int64_t value) const;
     private:
         vec_t m_uz;
         seq_t m_seq;
