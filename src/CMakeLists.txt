@@ -18,6 +18,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
 
 set(SYRACUSE_UI)
 set(SYRACUSE_HPP
+    core/core.hpp
     core/Sequence.hpp)
 set(SYRACUSE_CPP
     main.cpp
@@ -29,7 +30,8 @@ set(DOCS_NAMESPACE "fr.beatussum.syracuse")
 
 find_package(Qt5 REQUIRED
              COMPONENTS Gui Widgets)
-find_package(Doxygen)
+find_package(Doxygen REQUIRED)
+find_package(Threads REQUIRED)
 
 configure_file(config-syracuse.hpp.in
                "${CMAKE_CURRENT_BINARY_DIR}/config-syracuse.hpp")
@@ -37,7 +39,7 @@ set(CMAKE_AUTOMOC TRUE)
 set(CMAKE_AUTOUIC TRUE)
 
 add_executable(syracuse ${SYRACUSE_UI} ${SYRACUSE_HPP} ${SYRACUSE_CPP})
-target_link_libraries(syracuse Qt5::Gui Qt5::Widgets)
+target_link_libraries(syracuse Qt5::Gui Qt5::Widgets ${CMAKE_THREAD_LIBS_INIT})
 
 if(DOXYGEN_FOUND AND WITH_DOCS)
     set(DOXYGEN_OUTPUT_DIRECTORY ${DOCS_DIR})
@@ -49,8 +51,13 @@ if(DOXYGEN_FOUND AND WITH_DOCS)
     set(DOXYGEN_WARN_NO_PARAMDOC YES)
     set(DOXYGEN_WARN_LOGFILE "${DOCS_DIR}/log")
     set(DOXYGEN_EXCLUDE_PATTERNS "${DOXYGEN_EXCLUDE_PATTERNS} *.in")
-    set(DOXYGEN_QHP_NAMESPACE ${DOCS_NAMESPACE})
-    set(DOXYGEN_ECLIPSE_DOC_ID ${DOCS_NAMESPACE})
+
+    string(CONCAT DOXYGEN_ALIASES_MUSTINIT
+           "@warning "
+           "To use this method, \\p \\1 must be initialized, or otherwise an "
+           "`std::invalid_argument` will be thrown.")
+    set(DOXYGEN_ALIASES "mustinit{1} = ${DOXYGEN_ALIASES_MUSTINIT}")
+
     doxygen_add_docs(docs
                      ${SYRACUSE_HPP}
                      COMMENT "Generating documentation…")
